@@ -1,0 +1,124 @@
+# DF-PMS-Opera-Adapter Configuration [CRUX-MK]
+#
+# 15. Foundation-DF (Welle-36): Oracle Opera PMS-Mosaic-Adapter (Premium).
+
+df_id: df-pms-opera-adapter
+df_name: HeyLou-Mosaic-Adapter-Opera
+version: 0.1.0-SKELETON
+domain: travel-hospitality
+welle_introduced: welle-36
+type: foundation-df
+crux-mk: true
+
+adapter_target: opera-pms
+
+llm_providers: []
+
+k11_cascade_isolation: hard
+failure_blast_radius: 1
+dependency_dlq_strategy: per-operation-jsonl
+
+k12_distillation_resistance:
+  output_feeds_into_training: false
+  provenance_required_in_output: true
+  non_llm_validation_layer: true
+
+k13_pre_action_verification:
+  enabled: true
+  external_anchor_type: vendor_api
+  external_anchor_validation_frequency: daily
+  pre_action_domain_check: true
+  pre_action_backup_check: true
+  pre_action_blast_radius_check: true
+  k0_q0_filter_enabled: true
+
+k14_human_override:
+  override_complexity: single_command
+  martin_review_cadence: weekly
+  bus_factor_handover_drilled: false
+  hardened_promotion_requires_phronesis_ticket: true
+
+k15_entropy_budget:
+  entropy_added_loc_estimate: 620
+  entropy_added_concepts:
+    - OperaConnector
+    - OperaAuth
+    - OperaAdapterOrchestrator
+    - OperaTokenService
+  entropy_justified_by_rho: 18000
+  entropy_subtractive_potential: 0
+
+k16_concurrent_spawn_protection: both
+lock_dir: /tmp/df-pms-opera-adapter.lock
+lock_stale_age_h: 6
+engine_pgrep_check: true
+lock_release_on: EXIT_INT_TERM
+
+lose_coupling:
+  LC1_graceful_degradation:
+    degradation_modes:
+      - full
+      - degraded_no_real_api
+      - standalone_mock
+    degradation_test_required: true
+
+  LC2_direct_mode:
+    direct_mode_available: true
+    direct_mode_capability: 0.5
+    direct_mode_trigger: "DF_PMS_OPERA_REAL_ENABLED!=true OR opera-api-unreachable"
+
+  LC3_circuit_breaker:
+    circuit_breaker_timeout_s: 30
+    circuit_breaker_open_threshold: 3
+    circuit_breaker_half_open_test_interval_s: 300
+
+  LC4_failure_isolation:
+    state_externalization: true
+    idempotent_operations: true
+    dependency_dlq_separate: true
+
+  LC5_health_check:
+    health_check_dependencies: []
+    health_check_degraded_score: 0.5
+    health_check_endpoint_or_file: branch-hub/state/df-pms-opera-adapter-health.json
+
+audit_dir: audit/
+audit_logs:
+  - opera-operations.jsonl
+  - opera-auth.jsonl
+loop_reports_dir: runs/loop-reports/
+
+env_vars:
+  DF_PMS_OPERA_REAL_ENABLED: false
+  OPERA_CLIENT_ID: ""
+  OPERA_CLIENT_SECRET: ""
+  OPERA_TOKEN_URL: ""
+  OPERA_HOTEL_ID: ""
+  DF_PMS_OPERA_PHRONESIS_TICKET: ""
+  DF_PMS_OPERA_HMAC_SECRET: ""
+  DF_PMS_OPERA_TENANT_ID: hildesheim
+  DF_PMS_OPERA_TIMEOUT_S: 30
+
+sandbox_hotels:
+  - hotel_id: hildesheim
+    name: HeyLou Hildesheim
+    opera_property_id: mock-opera-hildesheim-001
+  - hotel_id: cape-coral
+    name: HeyLou Cape Coral
+    opera_property_id: mock-opera-cape-coral-001
+
+promotion_path:
+  current_tier: SKELETON
+  target_tier: PRE-PRODUCTION-CONDITIONAL
+  pflicht_aktionen_welle_37:
+    - Cross-LLM-Wargame
+    - Failure-Injection-Tests >=7
+    - Real-Opera-Sandbox-Pilot (OXI Demo-Environment)
+    - Hildesheim-Pilot 30 Tage
+
+cascade_invariants:
+  orthogonal: "Adapter operiert nur auf Opera-OXI-Endpoints"
+  kanonisch: "frozen dataclass AdapterResponse"
+  monoton: "Operations: connect -> token-fetch -> query -> book -> cancel"
+  persistent: "JSONL Audit-Log + LoopReport-JSON"
+  bounded: "per-operation timeout 30s, token-cache 55min"
