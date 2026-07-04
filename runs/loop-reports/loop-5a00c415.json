@@ -1,0 +1,44 @@
+{
+  "loop_id": "5a00c415",
+  "df_id": "df-pms-opera-adapter",
+  "started_iso": "2026-07-03T10:11:17.518965+00:00",
+  "finished_iso": "2026-07-03T10:11:17.622706+00:00",
+  "sandbox_mode": true,
+  "final_status": "complete",
+  "phases_passed": [
+    "auth",
+    "connect",
+    "health_check",
+    "sample_query",
+    "audit_persist"
+  ],
+  "phases_failed": [],
+  "artifacts": {
+    "capabilities": {
+      "adapter_name": "opera-pms",
+      "version": "0.1.0-SKELETON",
+      "sandbox_mode": true,
+      "connected": true,
+      "adapter_type": "pms",
+      "segment": "premium",
+      "api_protocol": "OXI",
+      "supported_operations": [
+        "connect",
+        "query_inventory",
+        "book_room",
+        "cancel_booking"
+      ],
+      "feature_flags": {
+        "real_api": false,
+        "k17_pav": true,
+        "hmac_audit": true,
+        "circuit_breaker": true,
+        "oauth2_bearer": true,
+        "token_refresh": true
+      },
+      "health_score": 1.0
+    },
+    "sample_inventory_count": 3
+  },
+  "error": null
+}
